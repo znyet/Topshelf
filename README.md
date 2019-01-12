@@ -37,9 +37,6 @@ namespace Demo
 
 }
 
-
-
-
 //demo install -servicename Stuff -description "Topshelf Service"
 //demo uninstall -servicename Stuff
 //demo -help
