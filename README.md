@@ -1,6 +1,7 @@
 # Topshelf
 Fork from https://github.com/Topshelf/Topshelf <br>
 Builder net45<br>
+Api http://docs.topshelf-project.com/en/latest/configuration/config_api.html
 
 ## Example
 ```c#
