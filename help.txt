@@ -1,0 +1,83 @@
+http://docs.topshelf-project.com/en/latest/configuration/config_api.html
+
+https://github.com/Topshelf/Topshelf
+
+==================================================
+https://blog.csdn.net/by_ron/article/details/78252239
+
+using Quartz;
+using Quartz.Impl;
+using Quartz.Simpl;
+using Quartz.Xml;
+using Topshelf;
+
+namespace JobSchedule
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            HostFactory.Run(x =>
+            {
+                x.Service<TownCrier>(s =>
+                {
+                    s.ConstructUsing(name => new TownCrier());
+                    s.WhenStarted(tc => tc.Start());
+                    s.WhenStopped(tc => tc.Stop());
+                });
+                x.RunAsLocalSystem();
+
+                x.SetDescription("QuartzNet任务调度服务，灵活配置任务计划");
+                x.SetDisplayName("QuartzJobShedule");
+                x.SetServiceName("Quartz任务调度框架");
+            });           
+        }
+    }
+    /// <summary>
+    /// 服务主体（英文原意：在城镇中沿街呼叫传报公告的人）
+    /// </summary>
+    public class TownCrier
+    {
+        private IScheduler scheduler;
+        public TownCrier()
+        {
+            //初始化相关配置
+        }
+        public void Start()
+        {
+            //启动服务      
+        }
+        public void Stop()
+        {
+            //关闭服务            
+        }
+    }
+}
+--------------------- 
+2.更新TownCrier的代码如下
+
+public class TownCrier
+    {
+        private IScheduler scheduler;
+        public TownCrier()
+        {
+            //从配置中读取计划执行策略
+            XMLSchedulingDataProcessor processor = new XMLSchedulingDataProcessor(new SimpleTypeLoadHelper());
+            ISchedulerFactory sf = new StdSchedulerFactory();
+            scheduler = sf.GetScheduler();
+            processor.ProcessFileAndScheduleJobs("~/quartz_jobs.xml", scheduler);//quartz_jobs.xml文件路径
+        }
+        public void Start()
+        { 
+            scheduler.Start();//启动quartz服务
+        }
+        public void Stop()
+        {       
+            scheduler.Shutdown(false);//true:等待正在运行的计划任务执行完毕;false:强制关闭
+        }
+    }
+--------------------- 
+
+安装：TopshelfDemo.exe install
+启动：TopshelfDemo.exe start
+卸载：TopshelfDemo.exe uninstall
